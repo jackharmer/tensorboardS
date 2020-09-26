@@ -3,12 +3,12 @@ import Foundation
 class RecordWriter {
     let fileURL: URL
     let fileHandle: FileHandle
-    
+
     private var closed = false
-    
+
     init(fileURL: URL) throws {
         self.fileURL = fileURL
-        
+
         let parent = fileURL.deletingLastPathComponent()
         let fm = FileManager.default
         if !fm.fileExists(atPath: parent.path) {
@@ -19,7 +19,7 @@ class RecordWriter {
         }
         self.fileHandle = try FileHandle(forWritingTo: fileURL)
     }
-    
+
     func write(_ data: Data) {
         var len = UInt64(data.count)
         let header = Data(bytes: &len, count: MemoryLayout<UInt64>.size)
@@ -28,18 +28,20 @@ class RecordWriter {
         fileHandle.write(data)
         fileHandle.write(maskedCRC32C(data))
     }
-    
-    func flush() {
-        fileHandle.synchronize()
-    }
-    
+
+    func flush() {}
+
     func close() {
         guard !closed else {
             return
         }
         closed = true
         flush()
-        fileHandle.close()
+        do{
+          try fileHandle.close()
+        } catch {
+            print("Error closing file")
+        }
     }
 }
 
