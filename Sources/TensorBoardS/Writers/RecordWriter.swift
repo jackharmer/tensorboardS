@@ -30,7 +30,7 @@ class RecordWriter {
     }
     
     func flush() {
-        fileHandle.synchronizeFile()
+        fileHandle.synchronize()
     }
     
     func close() {
@@ -39,7 +39,7 @@ class RecordWriter {
         }
         closed = true
         flush()
-        fileHandle.closeFile()
+        fileHandle.close()
     }
 }
 
